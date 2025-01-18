@@ -1,0 +1,10 @@
+{
+  "input": {
+    "method": "wifi",
+    "wifi": {
+      "ssid": "MiniDrone_Network",
+      "password": "12345678",
+      "port": 4210
+    }
+  }
+}
