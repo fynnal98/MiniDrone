@@ -17,13 +17,16 @@ void DroneLogic::init(DatabaseTool* db) {
     motorPins[2] = db->get<int>("mode/drone/Motor03pin", 19);
     motorPins[3] = db->get<int>("mode/drone/Motor04pin", 21);
 
+    pwmFrequency = db->get<int>("mode/drone/pwmFrequency", 50);
+    pwmResolution = db->get<int>("mode/drone/pwmResolution", 10);
+
     // Initialisiere PWM für alle Motoren
     for (int i = 0; i < 4; i++) {
         if (motorPins[i] != -1) {
-            ledcSetup(i, 50, 10);           // PWM-Kanal i mit 50 Hz und 10-Bit-Auflösung
+            ledcSetup(i, pwmFrequency, pwmResolution); // PWM-Kanal, Frequenz, Auflösung
             ledcAttachPin(motorPins[i], i); // Motorpin mit PWM-Kanal verknüpfen
-            Serial.printf("Motor %d auf Pin %d initialisiert.\n", i + 1, motorPins[i]);
-        }
+            Serial.printf("Motor %d auf Pin %d initialisiert (Frequenz: %d Hz, Auflösung: %d Bit).\n", i + 1, motorPins[i], pwmFrequency, pwmResolution);        
+            }
     }
 }
 

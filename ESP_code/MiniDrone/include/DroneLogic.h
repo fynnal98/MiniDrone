@@ -14,6 +14,8 @@ public:
 private:
     int motorPins[4];   // Pins der Motoren
     int motorSpeeds[4]; // Geschwindigkeit der Motoren (0–100%)
+    int pwmFrequency;       // PWM-Frequenz
+    int pwmResolution;      // PWM-Auflösung
 
     void setMotorSpeeds();  // Sendet PWM-Signale an die Motoren
 };

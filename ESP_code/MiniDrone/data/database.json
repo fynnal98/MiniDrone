@@ -37,7 +37,21 @@
       "Motor01pin": 5,
       "Motor02pin": 18,
       "Motor03pin": 19,
-      "Motor04pin": 21
+      "Motor04pin": 21,
+      "pwmResolution": 5000,
+      "pwmFrequency": 10
+    },
+    "plane": {
+      "Motor01pin": 5,
+      "ServoRuder": 19,
+      "ServoElevator": 12,
+      "ServoAileron": 13,
+      "ServoFlaps": 18,
+      "ServoGear": 11
+    },
+    "heli": {
+      "Motor01pin": 5,
+      "Motor02pin": 18
     }
   }  
 }
