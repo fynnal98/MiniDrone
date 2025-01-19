@@ -9,7 +9,7 @@ void WiFiInput::init(DatabaseTool* db) {
     Serial.println("Initialisiere WiFiInput...");
     
     WiFi.disconnect(true, true); 
-    delay(100);
+    delay(10);
     WiFi.mode(WIFI_AP);
     WiFi.printDiag(Serial);
 

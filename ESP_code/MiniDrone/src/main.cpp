@@ -1,11 +1,13 @@
 #include "DatabaseTool.h"
 #include "InputHandler.h"
 #include "SensorHandler.h"
+#include "ModeManager.h"
 
 // Globale Module
 DatabaseTool database;
 InputHandler* inputHandler = nullptr;
 SensorHandler sensorHandler; 
+ModeManager modeManager(&database);
 
 void setup() {
     Serial.begin(115200);
@@ -22,12 +24,13 @@ void setup() {
 
 
     sensorHandler.begin(&database);
+
+    modeManager.init();
 }
 
 void loop() {
     if (inputHandler) {
         inputHandler->update();
-
         std::string input = inputHandler->getInput();
         if (!input.empty()) {
             Serial.print("Empfangene Daten: ");
@@ -35,11 +38,12 @@ void loop() {
         } else {
             Serial.println("Keine Eingabedaten empfangen.");
         }
-
-        sensorHandler.update();    
-        sensorHandler.printData();    
     } else {
         Serial.println("InputHandler nicht verfügbar.");
     }
-    delay(1000);
+
+    sensorHandler.update();    
+    modeManager.update(&sensorHandler, inputHandler);
+
+    delay(10);
 }

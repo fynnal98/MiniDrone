@@ -14,7 +14,30 @@
   "sensors": {
     "mpu6050": {
       "sda": 21,
-      "scl": 22
+      "scl": 22,
+      "filters": {
+        "complementary": {
+          "enabled": true,
+          "alpha": 0.98
+        },
+        "lowpass": {
+          "enabled": false,
+          "cutoffFrequency": 5.0
+        },
+        "highpass": {
+          "enabled": false,
+          "cutoffFrequency": 0.1
+        }
+      }
     }
-  }
+  },  
+  "mode": {
+    "type": "drone",
+    "drone": {
+      "Motor01pin": 5,
+      "Motor02pin": 18,
+      "Motor03pin": 19,
+      "Motor04pin": 21
+    }
+  }  
 }

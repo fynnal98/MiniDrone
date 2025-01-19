@@ -1,41 +1,83 @@
 #include "SensorHandler.h"
 
-SensorHandler::SensorHandler() : mpu6050() {}
+SensorHandler::SensorHandler()
+    : filteredRoll(0), filteredPitch(0), filteredYaw(0),
+      complementaryEnabled(false), alpha(0.98),
+      lowPassEnabled(false), lowPassCutoff(5.0),
+      highPassEnabled(false), highPassCutoff(0.1) {}
 
 void SensorHandler::begin(DatabaseTool* db) {
-    Serial.println("Initialisiere Sensoren...");
-    
-    // MPU6050 initialisieren mit Datenbank
     mpu6050.begin(db);
 
-    if (mpu6050.isConnected()) {
-        Serial.println("MPU6050 erfolgreich verbunden.");
-    } else {
-        Serial.println("Fehler: MPU6050 nicht verbunden!");
-    }
+    // Lade Filterparameter aus der JSON
+    complementaryEnabled = db->get<bool>("sensors/mpu6050/filters/complementary/enabled", true);
+    alpha = db->get<float>("sensors/mpu6050/filters/complementary/alpha", 0.98);
+
+    lowPassEnabled = db->get<bool>("sensors/mpu6050/filters/lowpass/enabled", false);
+    lowPassCutoff = db->get<float>("sensors/mpu6050/filters/lowpass/cutoffFrequency", 5.0);
+
+    highPassEnabled = db->get<bool>("sensors/mpu6050/filters/highpass/enabled", false);
+    highPassCutoff = db->get<float>("sensors/mpu6050/filters/highpass/cutoffFrequency", 0.1);
 }
 
 void SensorHandler::update() {
-    mpu6050.checkConnectionAndBlink();
-}
-
-void SensorHandler::printData() {
     sensors_event_t accel, gyro, temp;
     mpu6050.getEvent(&accel, &gyro, &temp);
 
-    // Serial.println("MPU6050 Daten:");
-    // Serial.print("  Accel X: "); Serial.print(accel.acceleration.x); Serial.println(" m/s^2");
-    // Serial.print("  Accel Y: "); Serial.print(accel.acceleration.y); Serial.println(" m/s^2");
-    // Serial.print("  Accel Z: "); Serial.print(accel.acceleration.z); Serial.println(" m/s^2");
-    // Serial.print("  Gyro X: "); Serial.print(gyro.gyro.x); Serial.println(" rad/s");
-    // Serial.print("  Gyro Y: "); Serial.print(gyro.gyro.y); Serial.println(" rad/s");
-    // Serial.print("  Gyro Z: "); Serial.print(gyro.gyro.z); Serial.println(" rad/s");
-    // Serial.print("  Temperatur: "); Serial.print(temp.temperature); Serial.println(" °C");
+    float dt = 0.01;  // Delta-Zeit in Sekunden (10 ms)
+
+    // Komplementärfilter anwenden
+    if (complementaryEnabled) {
+        applyComplementaryFilter(filteredRoll, filteredPitch, filteredYaw, accel, gyro, dt);
+    }
+
+    // Low-Pass-Filter anwenden
+    if (lowPassEnabled) {
+        applyLowPassFilter(filteredRoll, filteredRoll, lowPassCutoff, dt);
+        applyLowPassFilter(filteredPitch, filteredPitch, lowPassCutoff, dt);
+        applyLowPassFilter(filteredYaw, filteredYaw, lowPassCutoff, dt);
+    }
+
+    // High-Pass-Filter anwenden
+    if (highPassEnabled) {
+        applyHighPassFilter(filteredRoll, filteredRoll, highPassCutoff, dt);
+        applyHighPassFilter(filteredPitch, filteredPitch, highPassCutoff, dt);
+        applyHighPassFilter(filteredYaw, filteredYaw, highPassCutoff, dt);
+    }
 }
 
-bool SensorHandler::isAllConnected() {
-    return mpu6050.isConnected();
+void SensorHandler::getFilteredData(float& roll, float& pitch, float& yaw) {
+    roll = filteredRoll;
+    pitch = filteredPitch;
+    yaw = filteredYaw;
 }
 
+void SensorHandler::applyComplementaryFilter(float& roll, float& pitch, float& yaw, const sensors_event_t& accel, const sensors_event_t& gyro, float dt) {
+    // Accelerometer-Winkel berechnen
+    float accelRoll = atan2(accel.acceleration.y, accel.acceleration.z) * 180 / PI;
+    float accelPitch = atan2(-accel.acceleration.x, sqrt(accel.acceleration.y * accel.acceleration.y + accel.acceleration.z * accel.acceleration.z)) * 180 / PI;
 
+    // Gyroskop-Winkelintegration
+    float gyroRoll = roll + gyro.gyro.x * dt;
+    float gyroPitch = pitch + gyro.gyro.y * dt;
+    float gyroYaw = yaw + gyro.gyro.z * dt;
 
+    // Komplementärfilter
+    roll = alpha * gyroRoll + (1 - alpha) * accelRoll;
+    pitch = alpha * gyroPitch + (1 - alpha) * accelPitch;
+    yaw = gyroYaw;  // Nur Gyroskop für Yaw
+}
+
+void SensorHandler::applyLowPassFilter(float& value, float& previousValue, float cutoffFrequency, float dt) {
+    float rc = 1.0 / (2 * PI * cutoffFrequency);
+    float alpha = dt / (rc + dt);
+    value = previousValue + alpha * (value - previousValue);
+    previousValue = value;
+}
+
+void SensorHandler::applyHighPassFilter(float& value, float& previousValue, float cutoffFrequency, float dt) {
+    float rc = 1.0 / (2 * PI * cutoffFrequency);
+    float alpha = rc / (rc + dt);
+    value = alpha * (previousValue + value - previousValue);
+    previousValue = value;
+}
