@@ -40,26 +40,6 @@ void DatabaseTool::init() {
     Serial.println("JSON-Datei erfolgreich geladen.");
 }
 
-
-template <typename T>
-T DatabaseTool::get(const char* path, T defaultValue) {
-    JsonVariant value = resolvePath(path);
-    if (!value.isNull()) {
-        return value.as<T>();
-    }
-    return defaultValue;  // Rückgabe eines Standardwerts
-}
-
-template <typename T>
-void DatabaseTool::set(const char* path, T value) {
-    JsonVariant node = resolvePath(path, true);
-    if (!node.isNull()) {
-        node.set(value);
-        saveToFile();
-    }
-}
-
-
 JsonVariant DatabaseTool::resolvePath(const char* path, bool createMissing) {
     JsonVariant node = jsonDoc.as<JsonVariant>();
     char* token = strtok(strdup(path), "/");

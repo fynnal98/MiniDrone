@@ -11,8 +11,7 @@ public:
     virtual std::string getInput() = 0;
     virtual ~InputHandler() {}
 
-protected:
-    InputHandler* currentInput = nullptr;  // Zeiger auf die aktuelle Eingabemethode
+    static InputHandler* createHandler(DatabaseTool* db); // Factory-Methode zur Erstellung des Handlers
 };
 
 #endif

@@ -22,4 +22,23 @@ private:
     void saveToFile();
 };
 
+// Template-Methoden müssen in der Header-Datei definiert sein
+template <typename T>
+T DatabaseTool::get(const char* path, T defaultValue) {
+    JsonVariant value = resolvePath(path);
+    if (!value.isNull()) {
+        return value.as<T>();
+    }
+    return defaultValue;  // Rückgabe eines Standardwerts
+}
+
+template <typename T>
+void DatabaseTool::set(const char* path, T value) {
+    JsonVariant node = resolvePath(path, true);
+    if (!node.isNull()) {
+        node.set(value);
+        saveToFile();
+    }
+}
+
 #endif

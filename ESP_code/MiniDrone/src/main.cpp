@@ -1,30 +1,45 @@
 #include "DatabaseTool.h"
 #include "InputHandler.h"
-#include "WiFiInput.h"
+#include "SensorHandler.h"
 
 // Globale Module
 DatabaseTool database;
-InputHandler* inputHandler = nullptr;  // Zeiger auf die Basisklasse
+InputHandler* inputHandler = nullptr;
+SensorHandler sensorHandler; 
 
 void setup() {
     Serial.begin(115200);
 
-    // Initialisiere die Datenbank
     database.init();
 
-    // Initialisiere die Eingabemethode
-    inputHandler = new WiFiInput("MiniDrone_Network", "12345678", 4210);
-    inputHandler->init(&database);
+    inputHandler = InputHandler::createHandler(&database);
+    if (inputHandler) {
+        Serial.println("InputHandler erfolgreich erstellt.");
+        inputHandler->init(&database);  // WiFiInput::init sollte hier aufgerufen werden
+    } else {
+        Serial.println("Fehler: Keine gültige Eingabemethode gefunden.");
+    }
+
+
+    sensorHandler.begin(&database);
 }
 
 void loop() {
-    inputHandler->update();
+    if (inputHandler) {
+        inputHandler->update();
 
-    // Empfangene Daten ausgeben
-    std::string input = inputHandler->getInput();
-    if (!input.empty()) {
-        Serial.print("Empfangene Daten: ");
-        Serial.println(input.c_str());
+        std::string input = inputHandler->getInput();
+        if (!input.empty()) {
+            Serial.print("Empfangene Daten: ");
+            Serial.println(input.c_str());
+        } else {
+            Serial.println("Keine Eingabedaten empfangen.");
+        }
+
+        sensorHandler.update();    
+        sensorHandler.printData();    
+    } else {
+        Serial.println("InputHandler nicht verfügbar.");
     }
-    delay(10);
+    delay(1000);
 }
