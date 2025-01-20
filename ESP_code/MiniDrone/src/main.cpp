@@ -29,11 +29,10 @@ void setup() {
 }
 
 void loop() {
-    if (inputHandler) {
-        inputHandler->update();
-    }
+
+    inputHandler->update();
     sensorHandler.update();    
     modeManager.update(&sensorHandler, inputHandler);
 
-    delay(700);
+    delay(100);
 }

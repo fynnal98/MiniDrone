@@ -17,7 +17,7 @@
       "scl": 22,
       "filters": {
         "complementary": {
-          "enabled": false,
+          "enabled": true,
           "alpha": 0.98
         },
         "lowpass": {
@@ -25,7 +25,7 @@
           "cutoffFrequency": 5.0
         },
         "highpass": {
-          "enabled": false,
+          "enabled": true,
           "cutoffFrequency": 0.1
         }
       }

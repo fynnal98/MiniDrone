@@ -24,32 +24,45 @@ void SensorHandler::update() {
     sensors_event_t accel, gyro, temp;
     mpu6050.getEvent(&accel, &gyro, &temp);
 
-    float dt = 0.01;  // Delta-Zeit in Sekunden (10 ms)
-
+    float dt = 0.01;  
+    
     // Komplementärfilter anwenden
     if (complementaryEnabled) {
         applyComplementaryFilter(filteredRoll, filteredPitch, filteredYaw, accel, gyro, dt);
+        Serial.println("Komplementärfilter angewendet.");
     }
-
     // Low-Pass-Filter anwenden
-    if (lowPassEnabled) {
+    else if (lowPassEnabled) {
         applyLowPassFilter(filteredRoll, filteredRoll, lowPassCutoff, dt);
         applyLowPassFilter(filteredPitch, filteredPitch, lowPassCutoff, dt);
         applyLowPassFilter(filteredYaw, filteredYaw, lowPassCutoff, dt);
+        Serial.println("Low-Pass-Filter angewendet.");
     }
-
     // High-Pass-Filter anwenden
-    if (highPassEnabled) {
+    else if (highPassEnabled) {
         applyHighPassFilter(filteredRoll, filteredRoll, highPassCutoff, dt);
         applyHighPassFilter(filteredPitch, filteredPitch, highPassCutoff, dt);
         applyHighPassFilter(filteredYaw, filteredYaw, highPassCutoff, dt);
+        Serial.println("High-Pass-Filter angewendet.");
     }
+    // Fallback: Rohdaten direkt verwenden, falls kein Filter aktiv ist
+    else {
+        filteredRoll = atan2(accel.acceleration.y, accel.acceleration.z) * 180 / PI;
+        filteredPitch = atan2(-accel.acceleration.x, sqrt(accel.acceleration.y * accel.acceleration.y + accel.acceleration.z * accel.acceleration.z)) * 180 / PI;
+        filteredYaw += gyro.gyro.z * dt; // Nur Gyro-Daten für Yaw
+        Serial.println("Rohdaten direkt verwendet (kein Filter aktiv).");
+    }
+
+    // Debugging der gefilterten Werte
+    Serial.printf("Filtered Data -> Roll: %.2f, Pitch: %.2f, Yaw: %.2f\n", filteredRoll, filteredPitch, filteredYaw);
 }
 
 void SensorHandler::getFilteredData(float& roll, float& pitch, float& yaw) {
     roll = filteredRoll;
     pitch = filteredPitch;
     yaw = filteredYaw;
+    Serial.printf("Roll: %.2f, Pitch: %.2f, Yaw: %.2f\n", roll, pitch, yaw);
+
 }
 
 void SensorHandler::applyComplementaryFilter(float& roll, float& pitch, float& yaw, const sensors_event_t& accel, const sensors_event_t& gyro, float dt) {
