@@ -17,7 +17,7 @@ void setup() {
     inputHandler = InputHandler::createHandler(&database);
     if (inputHandler) {
         Serial.println("InputHandler erfolgreich erstellt.");
-        inputHandler->init(&database);  // WiFiInput::init sollte hier aufgerufen werden
+        inputHandler->init(&database); 
     } else {
         Serial.println("Fehler: Keine gültige Eingabemethode gefunden.");
     }
@@ -35,5 +35,5 @@ void loop() {
     sensorHandler.update();    
     modeManager.update(&sensorHandler, inputHandler);
 
-    delay(1000);
+    delay(700);
 }

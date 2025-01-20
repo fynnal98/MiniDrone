@@ -14,7 +14,7 @@ void WiFiInput::init(DatabaseTool* db) {
     WiFi.printDiag(Serial);
 
 
-    if (WiFi.softAP(ssid, password)) {
+    if (WiFi.softAP(ssid, password, 1, 0, 4)) {
         Serial.println("Access Point erfolgreich gestartet.");
     } else {
         Serial.println("Fehler beim Starten des Access Points!");

@@ -65,6 +65,10 @@ void MPU6050::checkConnectionAndBlink() {
 void MPU6050::getEvent(sensors_event_t* a, sensors_event_t* g, sensors_event_t* temp) {
     if (mpu.getEvent(a, g, temp)) {
         mpuConnected = true;
+        Serial.print("Accelerometer: ");
+        Serial.print("X: "); Serial.print(a->acceleration.x); Serial.print(" ");
+        Serial.print("Y: "); Serial.print(a->acceleration.y); Serial.print(" ");
+        Serial.print("Z: "); Serial.println(a->acceleration.z);
     } else {
         mpuConnected = false;
         Serial.println("Fehler beim Lesen der MPU6050-Daten.");

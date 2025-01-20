@@ -17,7 +17,7 @@
       "scl": 22,
       "filters": {
         "complementary": {
-          "enabled": true,
+          "enabled": false,
           "alpha": 0.98
         },
         "lowpass": {
@@ -34,15 +34,15 @@
   "mode": {
     "type": "drone",
     "drone": {
-      "Motor01pin": 5,
-      "Motor02pin": 18,
-      "Motor03pin": 19,
-      "Motor04pin": 21,
+      "Motor01pin": 13,
+      "Motor02pin": 12,
+      "Motor03pin": 14,
+      "Motor04pin": 27,
       "pwmResolution": 10,
-      "pwmFrequency": 500,
+      "pwmFrequency": 50,
       "pid": {
         "kp": 1,
-        "ki": 0.01,
+        "ki": 0,
         "kd": 0.2
       },
       "Channels": {

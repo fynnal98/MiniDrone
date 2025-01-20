@@ -55,7 +55,7 @@ void InputHandler::update() {
     }
     if (!rawData.empty()) {
         // Serial.print("Empfangene Rohdaten: ");
-        // Serial.println(rawData.c_str());
+        Serial.println(rawData.c_str());
         // Rohdaten parsen
         std::vector<int> parsedValues;
         std::istringstream ss(rawData);
