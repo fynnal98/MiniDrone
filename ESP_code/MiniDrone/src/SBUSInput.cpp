@@ -15,9 +15,6 @@ void SBUSInput::update() {
         for (int i = 0; i < bfs::SbusData::NUM_CH; ++i) {
             receivedData += std::to_string(data.ch[i]) + ",";
         }
-        // Füge Statusinformationen hinzu
-        receivedData += data.failsafe ? "failsafe," : "";
-        receivedData += data.lost_frame ? "lost_frame" : "";
     }
 }
 

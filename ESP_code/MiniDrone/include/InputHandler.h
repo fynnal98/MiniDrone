@@ -1,17 +1,27 @@
 #ifndef INPUTHANDLER_H
 #define INPUTHANDLER_H
 
-#include <string>
+#include "WiFiInput.h"
+#include "SBUSInput.h"
 #include "DatabaseTool.h"
+#include <map>
+#include <string>
+#include <vector>
+
 
 class InputHandler {
 public:
-    virtual void init(DatabaseTool* db) = 0;
-    virtual void update() = 0;
-    virtual std::string getInput() = 0;
-    virtual ~InputHandler() {}
+    static InputHandler* createHandler(DatabaseTool* db);
+    void init(DatabaseTool* db);
+    void update();
+    std::string getInput();
+    int getChannelValue(const std::string& channel);
 
-    static InputHandler* createHandler(DatabaseTool* db); // Factory-Methode zur Erstellung des Handlers
+private:
+    std::map<std::string, int> channelMapping;
+    std::map<std::string, int> channelValues;
+    WiFiInput* wifiInput = nullptr;
+    SBUSInput* sbusInput = nullptr;
 };
 
-#endif
+#endif // INPUTHANDLER_H

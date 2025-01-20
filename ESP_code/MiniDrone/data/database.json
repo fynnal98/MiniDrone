@@ -38,8 +38,19 @@
       "Motor02pin": 18,
       "Motor03pin": 19,
       "Motor04pin": 21,
-      "pwmResolution": 5000,
-      "pwmFrequency": 10
+      "pwmResolution": 10,
+      "pwmFrequency": 500,
+      "pid": {
+        "kp": 1,
+        "ki": 0.01,
+        "kd": 0.2
+      },
+      "Channels": {
+        "ChannelYaw": 4,
+        "ChannelPitch": 2,
+        "ChannelRoll": 1,
+        "ChannelThrottle": 3
+      }
     },
     "plane": {
       "Motor01pin": 5,

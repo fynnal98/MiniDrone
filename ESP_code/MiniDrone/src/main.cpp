@@ -31,19 +31,9 @@ void setup() {
 void loop() {
     if (inputHandler) {
         inputHandler->update();
-        std::string input = inputHandler->getInput();
-        if (!input.empty()) {
-            Serial.print("Empfangene Daten: ");
-            Serial.println(input.c_str());
-        } else {
-            Serial.println("Keine Eingabedaten empfangen.");
-        }
-    } else {
-        Serial.println("InputHandler nicht verfügbar.");
     }
-
     sensorHandler.update();    
     modeManager.update(&sensorHandler, inputHandler);
 
-    delay(10);
+    delay(1000);
 }
