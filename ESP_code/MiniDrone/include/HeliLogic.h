@@ -27,6 +27,9 @@ private:
     void applyCorrections(float rollCorrection, float pitchCorrection,
                           unsigned long& servoBackPulse, unsigned long& servoLeftPulse, unsigned long& servoRightPulse);
 
+    // Steuerung des Hauptmotors
+    void controlMainMotor(unsigned long channel8Pulse);
+
     // PID-Berechnung
     float calculatePID(float error, float& lastError, float dt);
 
@@ -39,8 +42,9 @@ private:
 
     // Servos
     Servo servoBack, servoLeft, servoRight;
+    Servo mainMotor;  // Servo für den Hauptmotor
 
-    // Servo-Pins
+    // Servo- und Motor-Pins
     int motorMainPin, motorAftPin, servoBackPin, servoLeftPin, servoRightPin;
 
     DatabaseTool* database;

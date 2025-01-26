@@ -54,8 +54,8 @@ void InputHandler::update() {
         rawData = sbusInput->getInput();
     }
     if (!rawData.empty()) {
-        Serial.print("Empfangene Rohdaten: ");
-        Serial.println(rawData.c_str());
+        // Serial.print("Empfangene Rohdaten: ");
+        // Serial.println(rawData.c_str());
         // Rohdaten parsen
         std::vector<int> parsedValues;
         std::istringstream ss(rawData);

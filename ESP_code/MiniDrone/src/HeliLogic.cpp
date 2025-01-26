@@ -23,6 +23,9 @@ void HeliLogic::init() {
     servoLeft.attach(servoLeftPin);
     servoRight.attach(servoRightPin);
 
+    // Hauptmotor initialisieren
+    mainMotor.attach(motorMainPin);
+
     Serial.println("HeliLogic initialisiert.");
 }
 
@@ -32,9 +35,13 @@ void HeliLogic::update(SensorHandler* sensors, InputHandler* input) {
     lastUpdateTime = currentTime;
 
     // Eingabekanäle
-    unsigned long rollInput = map(input->getChannelValue("Channel1"), 172, 1811, -500, 500);  // Roll
-    unsigned long pitchInput = map(input->getChannelValue("Channel2"), 172, 1811, -500, 500); // Pitch
-    unsigned long thrustInput = map(input->getChannelValue("Channel6"), 172, 1811, 1000, 2000); // Thrust
+    unsigned long rollInput = map(input->getChannelValue("Channel1"), 172, 1811, -500, 500);
+    unsigned long pitchInput = map(input->getChannelValue("Channel2"), 172, 1811, -500, 500); 
+    unsigned long thrustInput = map(input->getChannelValue("Channel6"), 172, 1811, 1000, 2000); 
+    unsigned long motorMainInput = map(input->getChannelValue("MotorMain"), 172, 1811, 1000, 2000); 
+
+    // Hauptmotor steuern
+    controlMainMotor(motorMainInput);
 
     // Sensordaten für Roll und Pitch-Korrekturen
     float roll, pitch, yaw;
@@ -55,8 +62,8 @@ void HeliLogic::update(SensorHandler* sensors, InputHandler* input) {
     servoRight.writeMicroseconds(servoRightPulse);
 
     // Debugging
-    Serial.printf("Inputs -> Roll: %lu, Pitch: %lu, Thrust: %lu\n", rollInput, pitchInput, thrustInput);
-    Serial.printf("Swashplate -> Back: %lu, Left: %lu, Right: %lu\n", servoBackPulse, servoLeftPulse, servoRightPulse);
+    // Serial.printf("Inputs -> Roll: %lu, Pitch: %lu, Thrust: %lu, MotorMain: %lu\n", rollInput, pitchInput, thrustInput, motorMainInput);
+    // Serial.printf("Swashplate -> Back: %lu, Left: %lu, Right: %lu\n", servoBackPulse, servoLeftPulse, servoRightPulse);
 }
 
 float HeliLogic::calculatePID(float error, float& lastError, float dt) {
@@ -74,13 +81,13 @@ void HeliLogic::calculateSwashplatePositions(unsigned long rollInput, unsigned l
     applyInputs(rollInput, pitchInput, thrustInput, servoBackPulse, servoLeftPulse, servoRightPulse);
 
     // Debugging: Nach Inputs
-    Serial.printf("Nach Inputs -> Back: %lu, Left: %lu, Right: %lu\n", servoBackPulse, servoLeftPulse, servoRightPulse);
+    // Serial.printf("Nach Inputs -> Back: %lu, Left: %lu, Right: %lu\n", servoBackPulse, servoLeftPulse, servoRightPulse);
 
     // Korrekturen anwenden
     applyCorrections(rollCorrection, pitchCorrection, servoBackPulse, servoLeftPulse, servoRightPulse);
 
     // Debugging: Nach Korrekturen
-    Serial.printf("Nach Korrekturen -> Back: %lu, Left: %lu, Right: %lu\n", servoBackPulse, servoLeftPulse, servoRightPulse);
+    // Serial.printf("Nach Korrekturen -> Back: %lu, Left: %lu, Right: %lu\n", servoBackPulse, servoLeftPulse, servoRightPulse);
 
     // Begrenzung der Servoimpulse auf 1000–2000 µs
     servoBackPulse = constrain(servoBackPulse, 1000, 2000);
@@ -110,4 +117,10 @@ void HeliLogic::applyCorrections(float rollCorrection, float pitchCorrection,
     servoBackPulse -= pitchCorrection;
     servoLeftPulse += pitchCorrection;
     servoRightPulse -= pitchCorrection; 
+}
+
+void HeliLogic::controlMainMotor(unsigned long motorMainInput) {
+    mainMotor.writeMicroseconds(motorMainInput);
+    Serial.printf("MotorMain Input -> PWM: %lu\n", motorMainInput);
+
 }
