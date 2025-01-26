@@ -17,12 +17,12 @@
       "scl": 22,
       "filters": {
         "complementary": {
-          "enabled": false,
-          "alpha": 0.98
+          "enabled": true,
+          "alpha": 0.9
         },
         "lowpass": {
-          "enabled": false,
-          "cutoffFrequency": 5.0
+          "enabled": true,
+          "cutoffFrequency": 20
         },
         "highpass": {
           "enabled": false,
@@ -69,12 +69,13 @@
       "Channels": {
         "Channel1": 1,
         "Channel2": 2,
-        "Channel6": 6
+        "Channel6": 6,
+        "MotorMain": 8
       },
       "pid": {
-        "kp": 8,
+        "kp": 10,
         "ki": 0.0,
-        "kd": 0.995
+        "kd": 0.2
       }
     }
   }  
