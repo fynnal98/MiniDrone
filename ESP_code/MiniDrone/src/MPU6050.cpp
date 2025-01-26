@@ -7,8 +7,8 @@ MPU6050::MPU6050() : mpu(), mpuConnected(false) {}
 
 void MPU6050::begin(DatabaseTool* db) {
     // Pins aus der Datenbank lesen
-    int sda = db->get<int>("sensors/mpu6050/sda", 21); 
-    int scl = db->get<int>("sensors/mpu6050/scl", 22);  
+    int sda = db->get<int>("sensors/mpu6050/sda", 8); 
+    int scl = db->get<int>("sensors/mpu6050/scl", 9);  
 
     // I²C mit den definierten Pins starten
     Wire.begin(sda, scl);
@@ -65,10 +65,10 @@ void MPU6050::checkConnectionAndBlink() {
 void MPU6050::getEvent(sensors_event_t* a, sensors_event_t* g, sensors_event_t* temp) {
     if (mpu.getEvent(a, g, temp)) {
         mpuConnected = true;
-        Serial.print("Accelerometer: ");
-        Serial.print("X: "); Serial.print(a->acceleration.x); Serial.print(" ");
-        Serial.print("Y: "); Serial.print(a->acceleration.y); Serial.print(" ");
-        Serial.print("Z: "); Serial.println(a->acceleration.z);
+        // Serial.print("Accelerometer: ");
+        // Serial.print("X: "); Serial.print(a->acceleration.x); Serial.print(" ");
+        // Serial.print("Y: "); Serial.print(a->acceleration.y); Serial.print(" ");
+        // Serial.print("Z: "); Serial.println(a->acceleration.z);
     } else {
         mpuConnected = false;
         Serial.println("Fehler beim Lesen der MPU6050-Daten.");

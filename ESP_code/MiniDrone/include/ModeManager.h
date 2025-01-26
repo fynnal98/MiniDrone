@@ -6,15 +6,17 @@
 #include "DroneLogic.h"
 #include "PlaneLogic.h"
 #include "HeliLogic.h"
+#include "SensorHandler.h"
+#include "InputHandler.h"
 
 class ModeManager {
 public:
-    ModeManager(DatabaseTool* db);  // Konstruktor mit DatabaseTool
-    void init();                   // Initialisiere den Modus
+    ModeManager(DatabaseTool* db);
+    void init();
     void update(SensorHandler* sensors, InputHandler* input);
 
 private:
-    DatabaseTool* database;  // Zeiger auf die JSON-Datenbank
+    DatabaseTool* database;
     std::string currentMode;
 
     DroneLogic* droneLogic;
@@ -25,9 +27,9 @@ private:
     void setupPlaneMode();
     void setupHeliMode();
 
-    void cleanupDroneMode();  // Bereinigt den Drohnenmodus
-    void cleanupPlaneMode();  // Bereinigt den Flugzeugmodus
-    void cleanupHeliMode();   // Bereinigt den Helikoptermodus
+    void cleanupDroneMode();
+    void cleanupPlaneMode();
+    void cleanupHeliMode();
 };
 
 #endif

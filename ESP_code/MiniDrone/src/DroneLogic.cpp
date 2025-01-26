@@ -33,34 +33,17 @@ void DroneLogic::init(DatabaseTool* db) {
 
 void DroneLogic::update(SensorHandler* sensors, InputHandler* input) {
     // Rohdaten abrufen
+     // Rohdaten abrufen
     int rawThrottle = input->getChannelValue("ChannelThrottle");
     int rawYaw = input->getChannelValue("ChannelYaw");
     int rawPitch = input->getChannelValue("ChannelPitch");
     int rawRoll = input->getChannelValue("ChannelRoll");
 
-    // Sensordaten abrufen
-    float rollAngle, pitchAngle, yawAngle;
-    sensors->getFilteredData(rollAngle, pitchAngle, yawAngle);
-
-    // Berechnung der Fehler
-    float rollError = map(rawRoll, 1000, 2000, -30, 30) - rollAngle;   // Roll-Fehler
-    float pitchError = map(rawPitch, 1000, 2000, -30, 30) - pitchAngle; // Pitch-Fehler
-
-    // PID-Korrekturen berechnen
-    float rollCorrection = kp * rollError + ki * rollErrorSum + kd * (rollError - lastRollError);
-    float pitchCorrection = kp * pitchError + ki * pitchErrorSum + kd * (pitchError - lastPitchError);
-
-    // Fehler summieren (I-Anteil) und speichern
-    rollErrorSum += rollError;
-    pitchErrorSum += pitchError;
-    lastRollError = rollError;
-    lastPitchError = pitchError;
-
     // Motorberechnung
-    motorSpeeds[0] = rawThrottle + pitchCorrection - rollCorrection; // Front-Left
-    motorSpeeds[1] = rawThrottle + pitchCorrection + rollCorrection; // Front-Right
-    motorSpeeds[2] = rawThrottle - pitchCorrection - rollCorrection; // Back-Left
-    motorSpeeds[3] = rawThrottle - pitchCorrection + rollCorrection; // Back-Right
+    motorSpeeds[0] = rawThrottle; // Front-Left
+    motorSpeeds[1] = rawThrottle; // Front-Right
+    motorSpeeds[2] = rawThrottle; // Back-Left
+    motorSpeeds[3] = rawThrottle; // Back-Right
 
     // Begrenzung der Motorwerte auf 1000–2000 µs
     for (int i = 0; i < 4; i++) {

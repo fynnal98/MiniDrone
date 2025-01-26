@@ -1,38 +1,27 @@
-#include "DatabaseTool.h"
-#include "InputHandler.h"
-#include "SensorHandler.h"
+#include <Arduino.h>
 #include "ModeManager.h"
+#include "SensorHandler.h"
+#include "InputHandler.h"
+#include "DatabaseTool.h"
 
-// Globale Module
 DatabaseTool database;
-InputHandler* inputHandler = nullptr;
-SensorHandler sensorHandler; 
-ModeManager modeManager(&database);
+SensorHandler sensorHandler;
+InputHandler* inputHandler;
+ModeManager* modeManager;
 
 void setup() {
     Serial.begin(115200);
 
     database.init();
-
-    inputHandler = InputHandler::createHandler(&database);
-    if (inputHandler) {
-        Serial.println("InputHandler erfolgreich erstellt.");
-        inputHandler->init(&database); 
-    } else {
-        Serial.println("Fehler: Keine gültige Eingabemethode gefunden.");
-    }
-
-
     sensorHandler.begin(&database);
-
-    modeManager.init();
+    inputHandler = InputHandler::createHandler(&database);
+    modeManager = new ModeManager(&database);
+    modeManager->init();
 }
 
 void loop() {
-
     inputHandler->update();
-    sensorHandler.update();    
-    modeManager.update(&sensorHandler, inputHandler);
-
-    delay(100);
+    sensorHandler.update();
+    modeManager->update(&sensorHandler, inputHandler);
+    delay(10);
 }

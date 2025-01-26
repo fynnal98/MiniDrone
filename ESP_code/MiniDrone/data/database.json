@@ -3,7 +3,7 @@
     "method": "sbus",
     "sbus": {
       "rxPin": 16,
-      "txPin": 15
+      "txPin": 17
     },
     "wifi": {
       "ssid": "MiniDrone_Network",
@@ -17,7 +17,7 @@
       "scl": 22,
       "filters": {
         "complementary": {
-          "enabled": true,
+          "enabled": false,
           "alpha": 0.98
         },
         "lowpass": {
@@ -25,19 +25,19 @@
           "cutoffFrequency": 5.0
         },
         "highpass": {
-          "enabled": true,
+          "enabled": false,
           "cutoffFrequency": 0.1
         }
       }
     }
   },  
   "mode": {
-    "type": "drone",
+    "type": "heli",
     "drone": {
-      "Motor01pin": 13,
-      "Motor02pin": 12,
-      "Motor03pin": 14,
-      "Motor04pin": 27,
+      "Motor01pin":0,
+      "Motor02pin": 1,
+      "Motor03pin": 2,
+      "Motor04pin": 3,
       "pwmResolution": 10,
       "pwmFrequency": 50,
       "pid": {
@@ -61,8 +61,21 @@
       "ServoGear": 11
     },
     "heli": {
-      "Motor01pin": 5,
-      "Motor02pin": 18
+      "ServoBack": 13,
+      "ServoLeft": 14,
+      "ServoRight": 15,
+      "MotorMain": 5,
+      "MotorAft": 17,
+      "Channels": {
+        "Channel1": 1,
+        "Channel2": 2,
+        "Channel6": 6
+      },
+      "pid": {
+        "kp": 8,
+        "ki": 0.0,
+        "kd": 0.995
+      }
     }
   }  
 }

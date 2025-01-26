@@ -10,7 +10,7 @@ void SensorHandler::begin(DatabaseTool* db) {
     mpu6050.begin(db);
 
     // Lade Filterparameter aus der JSON
-    complementaryEnabled = db->get<bool>("sensors/mpu6050/filters/complementary/enabled", true);
+    complementaryEnabled = db->get<bool>("sensors/mpu6050/filters/complementary/enabled", false);
     alpha = db->get<float>("sensors/mpu6050/filters/complementary/alpha", 0.98);
 
     lowPassEnabled = db->get<bool>("sensors/mpu6050/filters/lowpass/enabled", false);
@@ -50,18 +50,18 @@ void SensorHandler::update() {
         filteredRoll = atan2(accel.acceleration.y, accel.acceleration.z) * 180 / PI;
         filteredPitch = atan2(-accel.acceleration.x, sqrt(accel.acceleration.y * accel.acceleration.y + accel.acceleration.z * accel.acceleration.z)) * 180 / PI;
         filteredYaw += gyro.gyro.z * dt; // Nur Gyro-Daten für Yaw
-        Serial.println("Rohdaten direkt verwendet (kein Filter aktiv).");
+        // Serial.println("Rohdaten direkt verwendet (kein Filter aktiv).");
     }
 
     // Debugging der gefilterten Werte
-    Serial.printf("Filtered Data -> Roll: %.2f, Pitch: %.2f, Yaw: %.2f\n", filteredRoll, filteredPitch, filteredYaw);
+    // Serial.printf("Filtered Data -> Roll: %.2f, Pitch: %.2f, Yaw: %.2f\n", filteredRoll, filteredPitch, filteredYaw);
 }
 
 void SensorHandler::getFilteredData(float& roll, float& pitch, float& yaw) {
     roll = filteredRoll;
     pitch = filteredPitch;
     yaw = filteredYaw;
-    Serial.printf("Roll: %.2f, Pitch: %.2f, Yaw: %.2f\n", roll, pitch, yaw);
+    // Serial.printf("Roll: %.2f, Pitch: %.2f, Yaw: %.2f\n", roll, pitch, yaw);
 
 }
 
