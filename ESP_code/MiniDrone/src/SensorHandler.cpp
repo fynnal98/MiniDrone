@@ -29,21 +29,21 @@ void SensorHandler::update() {
     // Komplementärfilter anwenden
     if (complementaryEnabled) {
         applyComplementaryFilter(filteredRoll, filteredPitch, filteredYaw, accel, gyro, dt);
-        Serial.println("Komplementärfilter angewendet.");
+        // Serial.println("Komplementärfilter angewendet.");
     }
     // Low-Pass-Filter anwenden
     else if (lowPassEnabled) {
         applyLowPassFilter(filteredRoll, filteredRoll, lowPassCutoff, dt);
         applyLowPassFilter(filteredPitch, filteredPitch, lowPassCutoff, dt);
         applyLowPassFilter(filteredYaw, filteredYaw, lowPassCutoff, dt);
-        Serial.println("Low-Pass-Filter angewendet.");
+        // Serial.println("Low-Pass-Filter angewendet.");
     }
     // High-Pass-Filter anwenden
     else if (highPassEnabled) {
         applyHighPassFilter(filteredRoll, filteredRoll, highPassCutoff, dt);
         applyHighPassFilter(filteredPitch, filteredPitch, highPassCutoff, dt);
         applyHighPassFilter(filteredYaw, filteredYaw, highPassCutoff, dt);
-        Serial.println("High-Pass-Filter angewendet.");
+        // Serial.println("High-Pass-Filter angewendet.");
     }
     // Fallback: Rohdaten direkt verwenden, falls kein Filter aktiv ist
     else {

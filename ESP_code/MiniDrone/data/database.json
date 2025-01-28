@@ -3,7 +3,7 @@
     "method": "sbus",
     "sbus": {
       "rxPin": 16,
-      "txPin": 17
+      "txPin": 12
     },
     "wifi": {
       "ssid": "MiniDrone_Network",
@@ -66,11 +66,14 @@
       "ServoRight": 15,
       "MotorMain": 5,
       "MotorAft": 17,
+      "yawFactor": 0.9,
       "Channels": {
-        "Channel1": 1,
-        "Channel2": 2,
-        "Channel6": 6,
+        "roll": 1,
+        "pitch": 2,
+        "thrust": 6,
+        "yaw": 4,
         "MotorMain": 8
+
       },
       "pid": {
         "kp": 10,
