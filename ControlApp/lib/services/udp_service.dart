@@ -23,4 +23,10 @@ class UDPService {
     final String data = "${throttle.toStringAsFixed(2)},${yaw.toStringAsFixed(2)},${pitch.toStringAsFixed(2)},${roll.toStringAsFixed(2)}";
     await sender.send(data.codeUnits, Endpoint.unicast(InternetAddress(espIp), port: Port(espPort)));
   }
+
+  Future<void> sendSaveCommand() async {
+    await sender.send("save".codeUnits, Endpoint.unicast(InternetAddress(espIp), port: Port(espPort)));
+  }
+
+
 }

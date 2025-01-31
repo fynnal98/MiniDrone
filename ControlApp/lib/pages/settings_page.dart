@@ -183,13 +183,21 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> _saveProfile() async {
+    // Lokales Speichern in der App
     Map<String, String> currentProfileData = {};
     parameterControllers.forEach((key, controller) {
       currentProfileData[key] = controller.text;
     });
     await sharedPrefsService.saveProfileParameters(selectedProfile, currentProfileData);
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profil gespeichert.')));
+
+    // Befehl zum Speichern auf dem ESP32 senden
+    await udpService.sendSaveCommand();
+
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text('Profil lokal gespeichert und JSON auf dem ESP aktualisiert.'),
+    ));
   }
+
 
   @override
   Widget build(BuildContext context) {
