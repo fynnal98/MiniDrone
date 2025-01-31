@@ -1,33 +1,21 @@
 #include "WiFiInput.h"
+#include "InputHandler.h"
+#include <Arduino.h>
 
-WiFiInput::WiFiInput(const char* ssid, const char* password, int port)
-    : ssid(ssid), password(password), port(port) {
-    Serial.println("WiFiInput Konstruktor aufgerufen.");
-    }
+void WiFiInput::init(DatabaseTool* db, InputHandler* inputHandler) {
+    this->database = db;
+    this->inputHandler = inputHandler;
+    setupWiFi(db);
+}
 
-void WiFiInput::init(DatabaseTool* db) {
-    Serial.println("Initialisiere WiFiInput...");
-    
-    WiFi.disconnect(true, true); 
-    delay(10);
-    WiFi.mode(WIFI_AP);
-    WiFi.printDiag(Serial);
+void WiFiInput::setupWiFi(DatabaseTool* db) {
+    const char* ssid = db->get<const char*>("wifi/ssid", "HUBERT");
+    const char* password = db->get<const char*>("wifi/password", "12345678");
+    int port = db->get<int>("wifi/port", 4210);
 
-
-    if (WiFi.softAP(ssid, password, 1, 0, 4)) {
-        Serial.println("Access Point erfolgreich gestartet.");
-    } else {
-        Serial.println("Fehler beim Starten des Access Points!");
-    }
-
-    if (udp.begin(port)) {
-        Serial.printf("UDP-Server gestartet auf Port %d\n", port);
-    } else {
-        Serial.println("Fehler beim Starten des UDP-Servers!");
-    }
-
-    Serial.print("WiFiInput gestartet. IP-Adresse: ");
-    Serial.println(WiFi.softAPIP());
+    WiFi.softAP(ssid, password);
+    udp.begin(port);
+    Serial.printf("WiFiInput: WLAN gestartet: SSID = %s, Port = %d\n", ssid, port);
 }
 
 void WiFiInput::update() {
@@ -35,10 +23,19 @@ void WiFiInput::update() {
     if (packetSize > 0) {
         char incomingPacket[255];
         int len = udp.read(incomingPacket, 255);
-        if (len > 0) {
-            incomingPacket[len] = '\0';
-            receivedData = std::string(incomingPacket);
-        }
+        incomingPacket[len] = '\0';
+        receivedData = std::string(incomingPacket);
+        processAppData(receivedData);
+    }
+}
+
+void WiFiInput::processAppData(const std::string& data) {
+    if (data.find('=') != std::string::npos) {
+        Serial.println("WiFiInput: Parameterdaten empfangen.");
+        // Hier könnten Parameterdaten direkt weitergeleitet werden, z. B. an ParameterUpdater
+    } else {
+        Serial.println("WiFiInput: Steuerdaten empfangen.");
+        inputHandler->updateWithAppData(data);  // Steuerdaten an InputHandler weiterleiten
     }
 }
 

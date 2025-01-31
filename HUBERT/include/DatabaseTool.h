@@ -14,12 +14,11 @@ public:
     template <typename T>
     void set(const char* path, T value);  // Setzt einen Wert in der JSON-Datenbank
     JsonVariant resolvePath(const char* path, bool createMissing = false);
-
+    void saveToFile();
 
 private:
     StaticJsonDocument<2048> jsonDoc;  // Speicher für die JSON-Daten
 
-    void saveToFile();
 };
 
 // Template-Methoden müssen in der Header-Datei definiert sein

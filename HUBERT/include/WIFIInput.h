@@ -5,21 +5,24 @@
 #include <WiFi.h>
 #include <WiFiUdp.h>
 #include <string>
-#include <vector>
+
+// Vorwärtsdeklaration des InputHandlers zur Vermeidung zyklischer Abhängigkeiten
+class InputHandler;
 
 class WiFiInput {
 public:
-    WiFiInput(const char* ssid, const char* password, int port);
-    void init(DatabaseTool* db); // Entferne override
-    void update();
-    std::string getInput();
+    void init(DatabaseTool* db, InputHandler* inputHandler);
+    void update();  // Prüft UDP-Daten und verarbeitet Steuer- oder Parameterdaten
+    std::string getInput();  // Gibt die zuletzt empfangenen Daten zurück
 
 private:
-    const char* ssid;
-    const char* password;
-    int port;
     WiFiUDP udp;
+    DatabaseTool* database;
+    InputHandler* inputHandler;
     std::string receivedData;
+
+    void setupWiFi(DatabaseTool* db);
+    void processAppData(const std::string& data);  // Entscheidet, ob es Steuer- oder Parameterdaten sind
 };
 
-#endif // WIFIINPUT_H
+#endif  // WIFIINPUT_H
